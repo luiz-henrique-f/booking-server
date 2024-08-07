@@ -35,7 +35,7 @@ model user {
   establishment      establishment @relation(fields: [id_establishment], references: [id])
   name               String
   phone              String
-  email              String
+  email              String        @unique
   password           String
   start_time_service String
   end_time_service   String
