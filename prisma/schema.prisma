@@ -41,6 +41,7 @@ model user {
   end_time_service   String
   created_at         DateTime      @default(now())
   booking            booking[]
+  service            service[]
 }
 
 model client {
@@ -53,6 +54,8 @@ model client {
 
 model service {
   id          String    @id @default(uuid())
+  id_user     String
+  user        user      @relation(fields: [id_user], references: [id])
   description String
   price       String
   duration    String
