@@ -7,7 +7,18 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class BookingService {
   constructor(private prismaService: PrismaService) {}
 
-  create(createBookingDto: CreateBookingDto) {
+  async create(createBookingDto: CreateBookingDto) {
+    const service = await this.prismaService.service.findUnique({
+      where: {
+        id: createBookingDto.id_service,
+      },
+    });
+
+    const endTime = await this.getEndTime(
+      createBookingDto.start_time,
+      service.duration,
+    );
+
     return this.prismaService.booking.create({
       data: {
         id_user: createBookingDto.id_user,
@@ -15,10 +26,18 @@ export class BookingService {
         id_service: createBookingDto.id_service,
         date: createBookingDto.date,
         start_time: createBookingDto.start_time,
-        end_time: createBookingDto.end_time,
+        end_time: endTime,
         observation: createBookingDto.observation,
       },
     });
+  }
+
+  async getEndTime(start_time: string, interval: string) {
+    const intervalService = Number(interval);
+    const result = await this.prismaService
+      .$queryRaw`SELECT TO_CHAR(TO_TIMESTAMP(${start_time}, 'HH24:MI') + (${intervalService} * '1 minute'::interval), 'HH24:MI') AS new_time;
+`;
+    return result[0].new_time;
   }
 
   findAll() {
@@ -49,12 +68,23 @@ export class BookingService {
     });
   }
 
-  update(id: string, updateBookingDto: UpdateBookingDto) {
+  async update(id: string, updateBookingDto: UpdateBookingDto) {
+    const service = await this.prismaService.service.findUnique({
+      where: {
+        id: updateBookingDto.id_service,
+      },
+    });
+
+    const endTime = await this.getEndTime(
+      updateBookingDto.start_time,
+      service.duration,
+    );
+
     return this.prismaService.booking.update({
       data: {
         date: updateBookingDto.date,
         start_time: updateBookingDto.start_time,
-        // end_time: Criar lógica para calcular automático a hora final
+        end_time: endTime,
       },
       where: {
         id: id,

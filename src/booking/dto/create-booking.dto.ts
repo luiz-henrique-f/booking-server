@@ -4,6 +4,5 @@ export class CreateBookingDto {
   id_service: string;
   date: Date;
   start_time: string;
-  end_time: string;
   observation: string;
 }
