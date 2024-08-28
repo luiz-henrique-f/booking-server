@@ -19,6 +19,18 @@ export class BookingService {
       service.duration,
     );
 
+    const existBooking = await this.validHourBooking(
+      createBookingDto.start_time,
+      createBookingDto.id_user,
+      createBookingDto.date,
+    );
+
+    if (existBooking) {
+      throw new Error(
+        'Atenção, já existe um agendamento para o mesmo dia e horário',
+      );
+    }
+
     return this.prismaService.booking.create({
       data: {
         id_user: createBookingDto.id_user,
@@ -38,6 +50,17 @@ export class BookingService {
       .$queryRaw`SELECT TO_CHAR(TO_TIMESTAMP(${start_time}, 'HH24:MI') + (${intervalService} * '1 minute'::interval), 'HH24:MI') AS new_time;
 `;
     return result[0].new_time;
+  }
+
+  async validHourBooking(start_time: string, id_user: string, date: Date) {
+    const result = await this.prismaService.$queryRaw`SELECT booking.id
+                                                      FROM   booking
+                                                      WHERE  ${start_time}::time >=  booking.start_time::time
+                                                      and    ${start_time}::time <=  booking.end_time::time
+                                                      and    TO_CHAR(booking.date::timestamp, 'DD/MM/YYYY') = TO_CHAR(${date}::timestamp, 'DD/MM/YYYY')
+                                                      AND    booking.id_user = ${id_user};`;
+
+    return result;
   }
 
   findAll() {
