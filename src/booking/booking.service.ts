@@ -31,6 +31,15 @@ export class BookingService {
       );
     }
 
+    const dayValid = await this.validDayUser(
+      createBookingDto.date,
+      createBookingDto.id_user,
+    );
+
+    if (dayValid) {
+      throw new Error('Atenção, o colaborador está fora de serviço nesse dia');
+    }
+
     return this.prismaService.booking.create({
       data: {
         id_user: createBookingDto.id_user,
@@ -60,7 +69,20 @@ export class BookingService {
                                                       and    TO_CHAR(booking.date::timestamp, 'DD/MM/YYYY') = TO_CHAR(${date}::timestamp, 'DD/MM/YYYY')
                                                       AND    booking.id_user = ${id_user};`;
 
-    return result;
+    return result[0];
+  }
+
+  async validDayUser(date: Date, id_user: string) {
+    const result = await this.prismaService.$queryRaw`SELECT "establishment".*
+                                                      FROM   "establishment"
+                                                           , "user"
+                                                      WHERE  case when TO_CHAR(${date}::timestamp, 'd') < "establishment".start_day_service then 1
+                                                                  when TO_CHAR(${date}::timestamp, 'd') > "establishment".end_day_service  then 1
+                                                             end = 1
+                                                      and    "establishment".id = "user".id_establishment
+                                                      and    "user".id          = ${id_user};`;
+
+    return result[0];
   }
 
   findAll() {
