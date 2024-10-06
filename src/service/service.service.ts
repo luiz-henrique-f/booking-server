@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
-import { CreateServiceDto } from './dto/create-service.dto';
-import { UpdateServiceDto } from './dto/update-service.dto';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { Injectable } from '@nestjs/common'
+import type { CreateServiceDto } from './dto/create-service.dto'
+import type { UpdateServiceDto } from './dto/update-service.dto'
+import type { PrismaService } from 'src/prisma/prisma.service'
 
 @Injectable()
 export class ServiceService {
@@ -15,11 +15,11 @@ export class ServiceService {
         price: createServiceDto.price,
         duration: createServiceDto.duration,
       },
-    });
+    })
   }
 
   findAll() {
-    return this.prismaService.service.findMany();
+    return this.prismaService.service.findMany()
   }
 
   findOne(id: string) {
@@ -27,7 +27,7 @@ export class ServiceService {
       where: {
         id: id,
       },
-    });
+    })
   }
 
   update(id: string, updateServiceDto: UpdateServiceDto) {
@@ -40,7 +40,7 @@ export class ServiceService {
       where: {
         id: id,
       },
-    });
+    })
   }
 
   remove(id: string) {
@@ -48,6 +48,6 @@ export class ServiceService {
       where: {
         id: id,
       },
-    });
+    })
   }
 }

@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
-import { CreateEstablishmentDto } from './dto/create-establishment.dto';
-import { UpdateEstablishmentDto } from './dto/update-establishment.dto';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { Injectable } from '@nestjs/common'
+import type { CreateEstablishmentDto } from './dto/create-establishment.dto'
+import type { UpdateEstablishmentDto } from './dto/update-establishment.dto'
+import type { PrismaService } from 'src/prisma/prisma.service'
 
 @Injectable()
 export class EstablishmentService {
@@ -20,11 +20,11 @@ export class EstablishmentService {
         neighborhood: createEstablishmentDto.neighborhood,
         phone: createEstablishmentDto.phone,
       },
-    });
+    })
   }
 
   findAll() {
-    return this.prismaService.establishment.findMany();
+    return this.prismaService.establishment.findMany()
   }
 
   findOne(id: string) {
@@ -32,7 +32,7 @@ export class EstablishmentService {
       where: {
         id: id,
       },
-    });
+    })
   }
 
   update(id: string, updateEstablishmentDto: UpdateEstablishmentDto) {
@@ -51,7 +51,7 @@ export class EstablishmentService {
       where: {
         id: id,
       },
-    });
+    })
   }
 
   remove(id: string) {
@@ -59,6 +59,6 @@ export class EstablishmentService {
       where: {
         id: id,
       },
-    });
+    })
   }
 }

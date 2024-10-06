@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
-import { CreateClientDto } from './dto/create-client.dto';
-import { UpdateClientDto } from './dto/update-client.dto';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { Injectable } from '@nestjs/common'
+import type { CreateClientDto } from './dto/create-client.dto'
+import type { UpdateClientDto } from './dto/update-client.dto'
+import type { PrismaService } from 'src/prisma/prisma.service'
 
 @Injectable()
 export class ClientService {
@@ -13,11 +13,11 @@ export class ClientService {
         name: createClientDto.name,
         phone: createClientDto.phone,
       },
-    });
+    })
   }
 
   findAll() {
-    return this.prismaService.client.findMany();
+    return this.prismaService.client.findMany()
   }
 
   findOne(id: string) {
@@ -25,7 +25,7 @@ export class ClientService {
       where: {
         id: id,
       },
-    });
+    })
   }
 
   update(id: string, updateClientDto: UpdateClientDto) {
@@ -37,7 +37,7 @@ export class ClientService {
       where: {
         id: id,
       },
-    });
+    })
   }
 
   remove(id: string) {
@@ -45,6 +45,6 @@ export class ClientService {
       where: {
         id: id,
       },
-    });
+    })
   }
 }

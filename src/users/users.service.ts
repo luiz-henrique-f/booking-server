@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { LoginUserDto } from './dto/login-user.dto';
-import * as bcrypt from 'bcrypt';
-import { GetSchedulesUser } from './dto/get-schedules-user.dto';
+import { Injectable } from '@nestjs/common'
+import type { CreateUserDto } from './dto/create-user.dto'
+import type { UpdateUserDto } from './dto/update-user.dto'
+import type { PrismaService } from 'src/prisma/prisma.service'
+import type { LoginUserDto } from './dto/login-user.dto'
+import * as bcrypt from 'bcrypt'
+import type { GetSchedulesUser } from './dto/get-schedules-user.dto'
 
 @Injectable()
 export class UsersService {
@@ -21,11 +21,11 @@ export class UsersService {
         phone: createUserDto.phone,
         id_establishment: createUserDto.id_establishment,
       },
-    });
+    })
   }
 
   findAll() {
-    return this.prismaService.user.findMany();
+    return this.prismaService.user.findMany()
   }
 
   findOne(id: string) {
@@ -33,14 +33,13 @@ export class UsersService {
       where: {
         id: id,
       },
-    });
+    })
   }
 
   async findSchedules(GetSchedulesUser: GetSchedulesUser) {
-    const user = await this.findOne(GetSchedulesUser.id);
+    const user = await this.findOne(GetSchedulesUser.id)
 
-    const result = await this.prismaService
-      .$queryRaw`WITH RECURSIVE horarios AS (
+    const result = await this.prismaService.$queryRaw`WITH RECURSIVE horarios AS (
                 -- CTE inicial com o horário de início
                 SELECT ${user.start_time_service}::time AS start_time
                 UNION ALL
@@ -66,8 +65,8 @@ export class UsersService {
                 AND   TO_CHAR(booking.date::timestamp, 'DD/MM/YYYY') = TO_CHAR(${GetSchedulesUser.date}::timestamp, 'DD/MM/YYYY')
                 AND   booking.id_user = ${GetSchedulesUser.id}
             )
-            ORDER BY 1 ASC;`;
-    return result;
+            ORDER BY 1 ASC;`
+    return result
   }
 
   update(id: string, updateUserDto: UpdateUserDto) {
@@ -81,7 +80,7 @@ export class UsersService {
       where: {
         id: id,
       },
-    });
+    })
   }
 
   remove(id: string) {
@@ -89,7 +88,7 @@ export class UsersService {
       where: {
         id: id,
       },
-    });
+    })
   }
 
   findByEmail(email: string) {
@@ -97,25 +96,25 @@ export class UsersService {
       where: {
         email: email,
       },
-    });
+    })
   }
 
   async login(LoginUserDto: LoginUserDto) {
-    const user = await this.findByEmail(LoginUserDto.email);
+    const user = await this.findByEmail(LoginUserDto.email)
 
     const isPassword = await bcrypt.compare(
       LoginUserDto.password,
-      user.password,
-    );
+      user.password
+    )
 
     if (!user || !isPassword) {
-      throw new Error('Email ou senha inválidos.');
+      throw new Error('Email ou senha inválidos.')
     }
 
-    return user;
+    return user
   }
 
   generateHash(password: string) {
-    return bcrypt.hashSync(password, 10);
+    return bcrypt.hashSync(password, 10)
   }
 }
